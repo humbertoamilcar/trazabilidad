@@ -1,0 +1,87 @@
+# =============================
+# Básico / Seguridad
+# =============================
+Options -Indexes
+DirectoryIndex index.php
+
+# Bloquea archivos sensibles y dotfiles
+<FilesMatch "\.(env|ini|sql|log|config|bak|swp)$">
+  Require all denied
+</FilesMatch>
+<Files ~ "^\.">
+  Require all denied
+</Files>
+
+# Cabeceras de seguridad mínimas
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "no-referrer-when-downgrade"
+  # Ajusta CSP según necesites (comenta si molesta en dev)
+  #Header always set Content-Security-Policy "default-src 'self' data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:;"
+</IfModule>
+
+# =============================
+# Reescritura / Router
+# =============================
+RewriteEngine On
+
+# *** CAMBIA esta base si mueves la app ***
+RewriteBase /pventas/
+
+# Deja pasar archivos reales y directorios
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+
+
+# Pasa directo assets estáticos (ajusta ruta si usas "assets" en minúscula)
+RewriteCond %{REQUEST_URI} ^/pventas/Assets/ [OR]
+RewriteCond %{REQUEST_URI} \.(css|js|mjs|map|png|jpg|jpeg|gif|svg|webp|ico|mp3|mp4|json|woff|woff2|ttf|eot)$ [NC]
+RewriteRule ^ - [L]
+
+# Bloquea acceso directo a backend
+RewriteRule ^(Config|Controllers|Models|Libraries|vendor)/ - [F,L,NC]
+
+# Enruta todo lo demás a index.php
+RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
+
+# =============================
+# Compresión
+# =============================
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css application/xml application/xhtml+xml application/rss+xml application/javascript application/json image/svg+xml
+</IfModule>
+
+# =============================
+# Caché de estáticos (dev: moderado)
+# =============================
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 0 seconds"
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType application/json "access plus 7 days"
+  ExpiresByType image/svg+xml "access plus 30 days"
+  ExpiresByType image/webp "access plus 30 days"
+  ExpiresByType image/png "access plus 30 days"
+  ExpiresByType image/jpg "access plus 30 days"
+  ExpiresByType image/jpeg "access plus 30 days"
+  ExpiresByType image/gif "access plus 30 days"
+  ExpiresByType font/ttf "access plus 30 days"
+  ExpiresByType font/woff "access plus 30 days"
+  ExpiresByType font/woff2 "access plus 30 days"
+  <FilesMatch "\.(css|js|png|jpg|jpeg|gif|svg|webp|woff|woff2|ttf|eot)$">
+    Header set Cache-Control "public, max-age=604800, immutable"
+  </FilesMatch>
+</IfModule>
+
+# =============================
+# CORS (opcional para APIs)
+# =============================
+#<IfModule mod_headers.c>
+#  Header set Access-Control-Allow-Origin "*"
+#  Header set Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+#  Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+#</IfModule>
