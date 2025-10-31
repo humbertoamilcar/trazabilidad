@@ -3,7 +3,7 @@
 // CONFIGURACIÓN DE LA APP
 // ==========================
 
-const BASE_URL = "http://192.168.0.109/pventas/";
+const BASE_URL = "http://192.168.0.109/trazabilidad/";
 const DEBUG = true;
 const APP_TIMEZONE = 'America/Lima';
 const SESSION_NAME = 'trazabilidad_session';

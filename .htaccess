@@ -27,7 +27,7 @@ DirectoryIndex index.php
 RewriteEngine On
 
 # *** CAMBIA esta base si mueves la app ***
-RewriteBase /pventas/
+RewriteBase /trazabilidad/
 
 # Deja pasar archivos reales y directorios
 RewriteCond %{REQUEST_FILENAME} -f [OR]
@@ -37,7 +37,7 @@ RewriteRule ^ - [L]
 
 
 # Pasa directo assets estáticos (ajusta ruta si usas "assets" en minúscula)
-RewriteCond %{REQUEST_URI} ^/pventas/Assets/ [OR]
+RewriteCond %{REQUEST_URI} ^/trazabilidad/Assets/ [OR]
 RewriteCond %{REQUEST_URI} \.(css|js|mjs|map|png|jpg|jpeg|gif|svg|webp|ico|mp3|mp4|json|woff|woff2|ttf|eot)$ [NC]
 RewriteRule ^ - [L]
 
